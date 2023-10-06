@@ -1,4 +1,4 @@
-package gadb
+package adbgo
 
 import "log"
 
@@ -13,5 +13,5 @@ func debugLog(msg string) {
 	if !debugFlag {
 		return
 	}
-	log.Println("[DEBUG] [gadb] " + msg)
+	log.Println("[DEBUG] [adbgo] " + msg)
 }

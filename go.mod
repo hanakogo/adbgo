@@ -1,3 +1,3 @@
-module github.com/electricbubble/gadb
+module github.com/hanakogo/adbgo
 
-go 1.15
+go 1.21

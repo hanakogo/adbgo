@@ -1,4 +1,4 @@
-package gadb
+package adbgo
 
 import (
 	"fmt"
@@ -129,13 +129,9 @@ func (c Client) ForwardKillAll() (err error) {
 	return
 }
 
-func (c Client) Connect(ip string, port ...int) (err error) {
-	if len(port) == 0 {
-		port = []int{AdbDaemonPort}
-	}
-
+func (c Client) ConnectBySerial(serial string) (err error) {
 	var resp string
-	if resp, err = c.executeCommand(fmt.Sprintf("host:connect:%s:%d", ip, port[0])); err != nil {
+	if resp, err = c.executeCommand(fmt.Sprintf("host:connect:%s", serial)); err != nil {
 		return err
 	}
 	if !strings.HasPrefix(resp, "connected to") && !strings.HasPrefix(resp, "already connected to") {
@@ -144,11 +140,15 @@ func (c Client) Connect(ip string, port ...int) (err error) {
 	return
 }
 
-func (c Client) Disconnect(ip string, port ...int) (err error) {
-	cmd := fmt.Sprintf("host:disconnect:%s", ip)
-	if len(port) != 0 {
-		cmd = fmt.Sprintf("host:disconnect:%s:%d", ip, port[0])
+func (c Client) Connect(ip string, port ...int) (err error) {
+	if len(port) == 0 {
+		port = []int{AdbDaemonPort}
 	}
+	return c.ConnectBySerial(fmt.Sprintf("%s:%d", ip, port[0]))
+}
+
+func (c Client) DisconnectBySerial(serial string) (err error) {
+	cmd := fmt.Sprintf("host:disconnect:%s", serial)
 
 	var resp string
 	if resp, err = c.executeCommand(cmd); err != nil {
@@ -158,6 +158,14 @@ func (c Client) Disconnect(ip string, port ...int) (err error) {
 		return fmt.Errorf("adb disconnect: %s", resp)
 	}
 	return
+}
+
+func (c Client) Disconnect(ip string, port ...int) (err error) {
+	serial := ip
+	if len(port) != 0 {
+		serial = fmt.Sprintf("%s:%d", ip, port[0])
+	}
+	return c.DisconnectBySerial(serial)
 }
 
 func (c Client) DisconnectAll() (err error) {

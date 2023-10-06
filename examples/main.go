@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/electricbubble/gadb"
+	"github.com/hanakogo/adbgo"
 	"log"
 	"os"
 	"strings"
 )
 
 func main() {
-	adbClient, err := gadb.NewClient()
+	adbClient, err := adbgo.NewClient()
 	checkErr(err, "fail to connect adb server")
 
 	devices, err := adbClient.DeviceList()
